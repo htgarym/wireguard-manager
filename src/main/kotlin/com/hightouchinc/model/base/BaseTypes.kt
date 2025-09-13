@@ -1,6 +1,7 @@
 package com.hightouchinc.model.base
 
 import com.github.f4b6a3.uuid.UuidCreator
+import com.hightouchinc.model.CompletionError
 import java.util.UUID
 
 sealed interface Outcome<out T, out ERROR> {
@@ -23,6 +24,20 @@ value class Text private constructor(val value: String) {
 value class Identifier private constructor(val value: UUID) {
    constructor() :
       this(UuidCreator.getTimeOrderedEpoch())
+
+   companion object {
+
+      @JvmStatic
+      fun create(value: UUID) = Identifier(value)
+
+      @JvmStatic
+      fun create(id: String): Outcome<Identifier, CompletionError> =
+         try {
+            Outcome.Success(Identifier(UUID.fromString(id)))
+         } catch (e: IllegalArgumentException) {
+            Outcome.Error(CompletionError.UuidInvalid(id, e.localizedMessage))
+         }
+   }
 
    override fun toString(): String = value.toString()
 }

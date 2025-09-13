@@ -1,6 +1,7 @@
 package com.hightouchinc
 
 import com.hightouchinc.command.init.InitCommand
+import com.hightouchinc.command.user.UserCommand
 import io.micronaut.configuration.picocli.PicocliRunner
 import java.util.concurrent.Callable
 import kotlin.system.exitProcess
@@ -13,24 +14,31 @@ import picocli.CommandLine
    mixinStandardHelpOptions = true,
    subcommands = [
       InitCommand::class,
+      UserCommand::class,
    ],
 )
-class WireguardManagerCommand : Callable<Int> {
+class WireguardManagerCommand : Callable<Int>, CommandLine.IExitCodeGenerator {
 
    @CommandLine.Spec
    lateinit var spec: CommandLine.Model.CommandSpec
 
+   private var exitCode = 0
+
    override fun call(): Int {
       spec.commandLine().usage(System.out)
 
-      return 1
+      exitCode = 1
+
+      return exitCode
    }
+
+   override fun getExitCode(): Int = exitCode
 
    companion object {
       @JvmStatic fun main(args: Array<String>) {
-         val execResult: Int? = PicocliRunner.call(WireguardManagerCommand::class.java, *args)
+         val result: Int? = PicocliRunner.call(WireguardManagerCommand::class.java, *args)
 
-         exitProcess(execResult ?: 0)
+         exitProcess(result ?: 0) // FIXME: status is not being returned from commands, need to figure out why
       }
    }
 }

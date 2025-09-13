@@ -1,9 +1,9 @@
-package com.hightouchinc.persistence.server
+package com.hightouchinc.persistence.user
 
 import io.micronaut.data.jdbc.annotation.JdbcRepository
 import io.micronaut.data.model.query.builder.sql.Dialect.H2
-import io.micronaut.data.repository.CrudRepository
+import io.micronaut.data.repository.PageableRepository
 import java.util.*
 
 @JdbcRepository(dialect = H2)
-interface ServerRepository: CrudRepository<ServerEntity, UUID>
+interface UserRepository: PageableRepository<UserEntity, UUID>
