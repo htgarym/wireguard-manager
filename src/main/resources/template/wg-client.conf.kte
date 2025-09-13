@@ -1,0 +1,10 @@
+[Interface]
+PrivateKey = ${CLIENT_PRIVATE_KEY}
+Address = ${CLIENT_IP}/24
+
+[Peer]
+PublicKey = ${SERVER_PUBIC_KEY}
+Endpoint = ${SERVER_PUBLIC_IP}:51820
+PresharedKey = ${CLIENT_PRESHARED_KEY}
+AllowedIPs = 192.168.10.0/24, 10.0.0.0/8
+PersistentKeepalive = 25

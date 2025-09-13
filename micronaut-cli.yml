@@ -1,0 +1,6 @@
+applicationType: cli
+defaultPackage: com.hightouchinc
+testFramework: spock
+sourceLanguage: kotlin
+buildTool: gradle
+features: [app-name, data, data-jdbc, flyway, gradle, h2, http-client-test, jdbc-hikari, kotlin, micronaut-build, picocli, picocli-kotlin-application, picocli-spock, properties, readme, serialization-jackson, shade, slf4j-simple, spock]
