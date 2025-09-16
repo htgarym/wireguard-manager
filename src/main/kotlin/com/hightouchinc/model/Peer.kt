@@ -1,13 +1,16 @@
 package com.hightouchinc.model
 
-import com.hightouchinc.model.base.IpV4Address
+import com.hightouchinc.model.base.FourthOctet
 import com.hightouchinc.model.base.Identifier
 import com.hightouchinc.model.base.Text
 
-data class Server(
+data class Peer(
    val id: Identifier,
-   val iface: Text,
+   val name: Text,
+   val fourthOctet: FourthOctet,
    val privateKey: PrivateWireGuardKey,
    val publicKey: PublicWireGuardKey,
-   val publicAddress: IpV4Address,
+   val presharedKey: PresharedWireGuardKey,
+   val clientConfig: Text,
+   val server: Server,
 )

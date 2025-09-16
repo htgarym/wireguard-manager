@@ -20,11 +20,18 @@ class WireguardManagerCommandSpec extends Specification {
         ByteArrayOutputStream baos = new ByteArrayOutputStream()
         System.setOut(new PrintStream(baos))
 
-        String[] args = ['-v'] as String[]
-        PicocliRunner.run(WireguardManagerCommand, ctx, args)
+        String[] args = ['-h'] as String[]
+        PicocliRunner.call(WireguardManagerCommand, ctx, args)
 
         expect:
-        baos.toString().contains('Hi!')
+        baos.toString() == '''Usage: wireguard-manager [-hV] [COMMAND]
+CLI tool to manage a wireguard server and generate client configurations
+  -h, --help      Show this help message and exit.
+  -V, --version   Print version information and exit.
+Commands:
+  init, initialize  Initialize application
+  user              Manage users
+'''
     }
 }
 
