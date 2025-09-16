@@ -10,11 +10,12 @@ fun PromptBuilder.buildPromptForInterface(name: String): PromptBuilder {
          .name(name)
          .message("Choose interface")
 
+   listPrompt.pageSize(3)
+
    for (i in interfaces) {
       listPrompt.newItem(i).text(i).add()
    }
 
-   listPrompt.pageSize(3)
    listPrompt.addPrompt()
 
    return this

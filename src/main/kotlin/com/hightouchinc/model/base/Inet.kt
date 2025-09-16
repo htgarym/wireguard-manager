@@ -43,3 +43,19 @@ value class Port private constructor(val value: Int) {
 
    override fun toString(): String = value.toString()
 }
+
+@JvmInline
+value class FourthOctet private constructor(val value: Int) {
+   companion object {
+
+      @JvmStatic
+      fun create(octet: Int): Outcome<FourthOctet, CompletionError> =
+         when {
+            octet < 1 -> Outcome.Error(CompletionError.PortTooLow(octet))
+            octet > 254 -> Outcome.Error(CompletionError.PortTooHigh(octet))
+            else -> Outcome.Success(FourthOctet(octet))
+         }
+   }
+
+   override fun toString(): String = value.toString()
+}

@@ -1,5 +1,6 @@
 package com.hightouchinc.command.init
 
+import com.hightouchinc.model.CompletionError
 import com.hightouchinc.model.Server
 import com.hightouchinc.model.base.FirstThreeOctets
 import com.hightouchinc.model.base.Identifier
@@ -21,9 +22,10 @@ import picocli.CommandLine
    description = ["Initialize application"],
 )
 class InitCommand @Inject constructor(
-   private val serverRepository: ServerRepository
-) : Callable<Int> {
+   private val serverRepository: ServerRepository,
+) : Callable<Int>, CommandLine.IExitCodeGenerator {
    private val logger = LoggerFactory.getLogger(InitCommand::class.java)
+   private var exitCode = 0
 
    override fun call(): Int {
       logger.info("Initializing application")
@@ -40,21 +42,22 @@ class InitCommand @Inject constructor(
          )
       }
 
-      return if (promptResult.size != 3) {
+      this.exitCode = if (promptResult.size != 3) {
          logger.error("Not all values were captured")
 
-         -1
+         1
       } else if (!promptResult.containsKey("interface")) {
          logger.error("Interface was not captured")
 
-         -2
+         2
       } else if (!promptResult.containsKey("firstThree")) {
          logger.error("First Three Octets was not captured")
 
-         -3
+         3
       } else if (!promptResult.containsKey("port")) {
          logger.error("Port was not captured")
-         -4
+
+         4
       } else {
          val ifacePrompt = promptResult["interface"]!!.result
          val firstThreeOctetsPrompt = promptResult["firstThree"]!!.result
@@ -75,13 +78,32 @@ class InitCommand @Inject constructor(
                      )
                   )
                )
+
                0
             }
 
+            firstThreeOctets is Outcome.Error -> {
+               CompletionError.printError(logger, firstThreeOctets.error)
+
+               5
+            }
+
+            port is Outcome.Error -> {
+               CompletionError.printError(logger, port.error)
+
+               6
+            }
+
             else -> {
-               -5
+               logger.error("Unknown error has occurred")
+
+               7
             }
          }
       }
+
+      return exitCode
    }
+
+   override fun getExitCode(): Int = exitCode
 }
