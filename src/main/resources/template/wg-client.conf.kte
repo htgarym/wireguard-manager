@@ -1,10 +1,16 @@
+@import com.hightouchinc.templating.ServerTemplateModel
+@import com.hightouchinc.templating.ClientTemplateModel
+@param server: ServerTemplateModel
+@param client: ClientTemplateModel
 [Interface]
-PrivateKey = ${CLIENT_PRIVATE_KEY}
-Address = ${CLIENT_IP}/24
+PrivateKey = ${client.privateKey}
+Address = 192.168.10.${client.fourthOctet}/32
 
 [Peer]
-PublicKey = ${SERVER_PUBIC_KEY}
-Endpoint = ${SERVER_PUBLIC_IP}:51820
-PresharedKey = ${CLIENT_PRESHARED_KEY}
+# Client ID: ${client.id}
+# Client Name: ${client.name}
+PresharedKey = ${client.presharedKey}
+PublicKey = ${server.publicKey}
+Endpoint = ${server.publicAddress}:51820
 AllowedIPs = 192.168.10.0/24, 10.0.0.0/8
 PersistentKeepalive = 25

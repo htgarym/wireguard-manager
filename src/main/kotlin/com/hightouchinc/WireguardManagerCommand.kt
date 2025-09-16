@@ -1,20 +1,25 @@
 package com.hightouchinc
 
+import com.hightouchinc.command.database.Database
 import com.hightouchinc.command.init.InitCommand
-import com.hightouchinc.command.user.UserCommand
+import com.hightouchinc.command.peer.PeerCommand
+import com.hightouchinc.command.render.RenderCommand
 import io.micronaut.configuration.picocli.PicocliRunner
 import java.util.concurrent.Callable
 import kotlin.system.exitProcess
+import org.slf4j.LoggerFactory
 import picocli.CommandLine
 
 @CommandLine.Command(
-   version = ["1.0"],
+   version = ["0.0.1"],
    name = "wireguard-manager",
    description = ["CLI tool to manage a wireguard server and generate client configurations"],
    mixinStandardHelpOptions = true,
    subcommands = [
       InitCommand::class,
-      UserCommand::class,
+      PeerCommand::class,
+      RenderCommand::class,
+      Database::class,
    ],
 )
 class WireguardManagerCommand : Callable<Int>, CommandLine.IExitCodeGenerator {
@@ -35,10 +40,18 @@ class WireguardManagerCommand : Callable<Int>, CommandLine.IExitCodeGenerator {
    override fun getExitCode(): Int = exitCode
 
    companion object {
-      @JvmStatic fun main(args: Array<String>) {
-         val result: Int? = PicocliRunner.call(WireguardManagerCommand::class.java, *args)
 
-         exitProcess(result ?: 0) // FIXME: status is not being returned from commands, need to figure out why
+      @JvmStatic
+      fun main(args: Array<String>) {
+         val logger = LoggerFactory.getLogger(WireguardManagerCommand::class.java)
+
+         try {
+            val result: Int? = PicocliRunner.call(WireguardManagerCommand::class.java, *args)
+
+            exitProcess(result ?: 0) // FIXME: status is not being returned from commands, need to figure out why
+         } catch (e: Throwable) {
+            logger.error("Unexpected error while running Wireguard manager", e)
+         }
       }
    }
 }

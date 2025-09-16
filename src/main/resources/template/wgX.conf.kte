@@ -1,8 +1,10 @@
+@import com.hightouchinc.templating.ServerTemplateModel
+@param model: ServerTemplateModel
 [Interface]
-PrivateKey = ${SERVER_PRIVATE_KEY}
+PrivateKey = ${model.privateKey}
 Address = 192.168.10.1/24
 ListenPort = 51820
-SaveConfig = true
+SaveConfig = false
 
 # Create nftables table and chains for WireGuard
 PostUp = nft add table inet wireguard
@@ -14,7 +16,7 @@ PostUp = nft add rule inet wireguard forward_wg iifname "%i" accept
 PostUp = nft add rule inet wireguard forward_wg oifname "%i" accept
 
 # Enable NAT masquerading for outbound traffic
-PostUp = nft add rule inet wireguard postrouting_wg oifname "ens5" masquerade
+PostUp = nft add rule inet wireguard postrouting_wg oifname "${model.iface}" masquerade
 
 # Add route to 10.0.0.0/8 network via WireGuard interface
 PostUp = ip route add 10.0.0.0/8 via 192.168.10.1 dev %i
@@ -23,9 +25,12 @@ PostUp = ip route add 10.0.0.0/8 via 192.168.10.1 dev %i
 PostDown = nft delete table inet wireguard 2>/dev/null || true
 PostDown = ip route del 10.0.0.0/8 via 192.168.10.1 dev %i 2>/dev/null || true
 
-# Client configurations will be added here
-
+# Client configurations
+@for(client in model.clients)
 [Peer]
-PublicKey = ${CLIENT_PUBLIC_KEY}
-PresharedKey = ${CLIENT_PRESHARED_KEY}
-AllowedIPs = ${CLIENT_IP}
+# Client ID: ${client.id}
+PublicKey = ${client.publicKey}
+PresharedKey = ${client.presharedKey}
+AllowedIPs = 192.168.10.${client.fourthOctet}/32
+@endfor
+# Client configurations
