@@ -38,10 +38,10 @@ class PeerAddCommand @Inject constructor(
    private val logger = LoggerFactory.getLogger(PeerAddCommand::class.java)
    private var exitCode = 0
 
-   @CommandLine.Parameters(arity = "0", paramLabel = "USER", description = ["Username"])
+   @CommandLine.Parameters(index = "0", arity = "1", paramLabel = "USER", description = ["Username"])
    lateinit var username: String
 
-   @CommandLine.Parameters(arity = "1", paramLabel = "FOURTH_OCTET", description = ["Fourth Octet"], defaultValue = "2")
+   @CommandLine.Parameters(index = "1", arity = "1", paramLabel = "FOURTH_OCTET", description = ["Fourth Octet"], defaultValue = "2")
    var fourthOctetIn: Int = 0
 
    private fun generateClientKeys(): Outcome<Triple<PrivateWireGuardKey, PublicWireGuardKey, PresharedWireGuardKey>, CompletionError> {

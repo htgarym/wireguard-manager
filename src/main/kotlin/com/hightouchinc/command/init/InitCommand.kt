@@ -26,6 +26,7 @@ import picocli.CommandLine
 @CommandLine.Command(
    name = "initialize",
    aliases = ["init"],
+   mixinStandardHelpOptions = true,
    description = ["Initialize server"],
 )
 class InitCommand @Inject constructor(
