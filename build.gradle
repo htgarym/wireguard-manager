@@ -5,7 +5,6 @@ plugins {
     id("groovy")
     id("io.micronaut.application") version "4.5.4"
     id("com.gradleup.shadow") version "8.3.7"
-    id("maven-publish")
 }
 
 version = "0.0.1"
@@ -13,27 +12,6 @@ group = "com.hightouchinc"
 
 repositories {
     mavenCentral()
-}
-
-publishing {
-    publications {
-        shadow(MavenPublication) {
-            from components.shadow
-            groupId 'com.hightouchinc' // Replace with your group ID
-            artifactId 'wireguard-manager'
-            version '0.0.1'
-        }
-    }
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = "https://maven.pkg.github.com/htgarym/wireguard-manager"
-            credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
-            }
-        }
-    }
 }
 
 dependencies {

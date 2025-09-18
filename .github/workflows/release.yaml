@@ -12,16 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Cache Gradle dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            gradle-${{ runner.os }}-
-
       - uses: actions/setup-java@v4
         with:
           java-version: '21'
@@ -34,6 +24,11 @@ jobs:
         run: ./gradlew test
 
       - name: Publish package
-        run: ./gradlew publish
+        run: ./gradlew shadowjar
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/libs/wireguard-manager-*-all.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
