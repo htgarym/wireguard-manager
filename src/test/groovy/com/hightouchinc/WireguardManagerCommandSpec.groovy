@@ -29,8 +29,10 @@ CLI tool to manage a wireguard server and generate client configurations
   -h, --help      Show this help message and exit.
   -V, --version   Print version information and exit.
 Commands:
-  init, initialize  Initialize application
-  user              Manage users
+  initialize, init  Initialize server
+  peer              Manage peers
+  render            Manage configuration
+  database, db      Run queries on the database the easy way
 '''
     }
 }

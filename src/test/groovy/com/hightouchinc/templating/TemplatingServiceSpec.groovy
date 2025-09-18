@@ -130,7 +130,6 @@ AllowedIPs = 192.168.10.2/32
                 "w8H10aOK/2vaj3axOUx1oIfoYnAFE7lIWxxOeJljgUs=",
                 "SFk2P5GZGf1qCYGuKrm9ldqy1PlxRu+wbF2USKUtnE0=",
                 "192.168.11.1",
-                "",
         )
         def peer =
             new Peer(
