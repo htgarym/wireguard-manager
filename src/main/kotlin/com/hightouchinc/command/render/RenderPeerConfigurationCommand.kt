@@ -14,7 +14,7 @@ import picocli.CommandLine
 
 @CommandLine.Command(
    name = "peer",
-   description = ["Manage server configuration"],
+   description = ["Render peer configuration"],
    mixinStandardHelpOptions = true,
 )
 class RenderPeerConfigurationCommand @Inject constructor(
@@ -26,14 +26,14 @@ class RenderPeerConfigurationCommand @Inject constructor(
 
    override fun call(): Int {
       val servers = serverRepository.findAll().map(ServerEntity::toModel)
-      var server: Server? = null
-
-      if (servers.isEmpty()) {
+      val server = if (servers.isEmpty()) {
          logger.info("No servers found")
 
          exitCode = 1
+
+         return exitCode
       } else if (servers.size == 1) {
-         server = servers.first()
+         servers.first()
       } else {
          val promptResult = TerminalBuilder.builder().system(true).build().use { terminal ->
             val prompt = ConsolePrompt(terminal)
@@ -46,17 +46,17 @@ class RenderPeerConfigurationCommand @Inject constructor(
          }
 
          if (promptResult.size != 1) {
-            server = null
 
             exitCode = 2
+            null
          } else {
             val serverId = promptResult["server"]!!.result
 
-            server = servers.find { it.id.value.toString() == serverId }
+            servers.find { it.id.value.toString() == serverId }
          }
       }
 
-      if (server != null) {
+      exitCode = if (server != null) {
          val peers = peerRepository.findByServerId(server.id.value).map(PeerEntity::toModel)
 
          if (peers.isNotEmpty()) {
@@ -73,24 +73,30 @@ class RenderPeerConfigurationCommand @Inject constructor(
             if (promptResult.size != 1) {
                logger.info("No peers chosen")
 
-               exitCode = 3
+               3
             } else {
                val peerId = promptResult["peer"]!!.result
-               val peer = peers.find { it.id.value.toString() == peerId }!!
+               val peer = peers.find { it.id.value.toString() == peerId }
 
-               println(peer.clientConfig.value)
+               if (peer == null) {
+                  logger.error("Peer {} not found", peerId)
 
-               exitCode = 0
+                  6
+               } else {
+                  println(peer.clientConfig.value)
+
+                  0
+               }
             }
          } else {
             logger.error("No peers found for server {}", server.iface.value)
 
-            exitCode = 4
+            4
          }
       } else {
          logger.error("Server not found")
 
-         exitCode = 5
+         5
       }
 
       return exitCode

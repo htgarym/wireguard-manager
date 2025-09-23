@@ -13,7 +13,8 @@ value class FirstThreeOctets private constructor(val value: String) {
       @JvmStatic
       fun create(octets: String): Outcome<FirstThreeOctets, CompletionError> =
          when {
-            octets.length > 11 -> Outcome.Failure(CompletionError.FirstThreeOctetsTooShort(octets))
+            octets.length < 5 -> Outcome.Failure(CompletionError.FirstThreeOctetsTooShort(octets))
+            octets.length > 11 -> Outcome.Failure(CompletionError.FirstThreeOctetsTooLong(octets))
             !regex.matches(octets) -> Outcome.Failure(CompletionError.FirstThreeOctetsNotFormattedCorrectly(octets))
             else -> Outcome.Success(FirstThreeOctets(octets))
          }
@@ -52,8 +53,8 @@ value class FourthOctet private constructor(val value: Int) {
       @JvmStatic
       fun create(octet: Int): Outcome<FourthOctet, CompletionError> =
          when {
-            octet < 1 -> Outcome.Failure(CompletionError.PortTooLow(octet))
-            octet > 254 -> Outcome.Failure(CompletionError.PortTooHigh(octet))
+            octet < 1 -> Outcome.Failure(CompletionError.OctetTooLow(octet))
+            octet > 254 -> Outcome.Failure(CompletionError.OctetTooHigh(octet))
             else -> Outcome.Success(FourthOctet(octet))
          }
    }

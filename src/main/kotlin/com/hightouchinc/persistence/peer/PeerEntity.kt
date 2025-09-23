@@ -47,19 +47,19 @@ data class PeerEntity(
          name = Text.create(name),
          fourthOctet = when(val fourthOctet = FourthOctet.create(fourthOctet)) {
             is Outcome.Success -> fourthOctet.value
-            is Outcome.Failure -> throw IllegalStateException("Invalid fourth octet in database: $fourthOctet")
+            is Outcome.Failure -> throw IllegalStateException("Invalid fourth octet in database: ${fourthOctet.error}")
          },
          privateKey = when(val privateKey = PrivateWireGuardKey.create(privateKey)) {
             is Outcome.Success -> privateKey.value
-            is Outcome.Failure -> throw IllegalStateException("Invalid private key in database: $privateKey")
+            is Outcome.Failure -> throw IllegalStateException("Invalid private key in database: ${privateKey.error}")
          },
          publicKey = when(val publicKey = PublicWireGuardKey.create(publicKey)) {
             is Outcome.Success -> publicKey.value
-            is Outcome.Failure -> throw IllegalStateException("Invalid public key in database: $publicKey")
+            is Outcome.Failure -> throw IllegalStateException("Invalid public key in database: ${publicKey.error}")
          },
          presharedKey = when(val presharedKey = PresharedWireGuardKey.create(presharedKey)) {
             is Outcome.Success -> presharedKey.value
-            is Outcome.Failure -> throw IllegalStateException("Invalid preshared key in database: $presharedKey")
+            is Outcome.Failure -> throw IllegalStateException("Invalid preshared key in database: ${presharedKey.error}")
          },
          clientConfig = Text.create(peerConfig),
          server = server.toModel()

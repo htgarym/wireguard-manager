@@ -11,17 +11,16 @@ import java.io.Writer
 
 @Singleton
 class TemplatingService {
+   private val codeResolver = ResourceCodeResolver("template")
+   private val jteEngine = TemplateEngine.create(codeResolver, ContentType.Plain)
+
    fun renderServerConfig(server: Server, peers: List<Peer>, writer: Writer) {
-      val codeResolver = ResourceCodeResolver("template")
-      val jteEngine = TemplateEngine.create(codeResolver, ContentType.Plain)
       val templateOutput = WriterOutput(writer)
 
       jteEngine.render("wgX.conf.kte", ServerTemplateModel(server, peers), templateOutput)
    }
 
    fun renderClientConfig(peer: Peer, writer: Writer) {
-      val codeResolver = ResourceCodeResolver("template")
-      val jteEngine = TemplateEngine.create(codeResolver, ContentType.Plain)
       val templateOutput = WriterOutput(writer)
 
       jteEngine.render(
