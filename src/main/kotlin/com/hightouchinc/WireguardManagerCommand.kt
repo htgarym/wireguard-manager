@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 import picocli.CommandLine
 
 @CommandLine.Command(
-   version = ["0.0.2"],
+   version = ["0.0.3"],
    name = "wireguard-manager",
    description = ["CLI tool to manage a wireguard server and generate client configurations"],
    mixinStandardHelpOptions = true,
@@ -45,13 +45,17 @@ class WireguardManagerCommand : Callable<Int>, CommandLine.IExitCodeGenerator {
       fun main(args: Array<String>) {
          val logger = LoggerFactory.getLogger(WireguardManagerCommand::class.java)
 
-         try {
+         val exitCode = try {
             val result: Int? = PicocliRunner.call(WireguardManagerCommand::class.java, *args)
 
-            exitProcess(result ?: 0) // FIXME: status is not being returned from commands, need to figure out why
+            result ?: 0 // FIXME: status is not being returned from commands, need to figure out why
          } catch (e: Throwable) {
             logger.error("Unexpected error while running Wireguard manager", e)
+
+            1
          }
+
+         exitProcess(exitCode)
       }
    }
 }

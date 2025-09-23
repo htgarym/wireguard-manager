@@ -5,6 +5,7 @@ import org.slf4j.Logger
 
 sealed class CompletionError {
    class FirstThreeOctetsTooShort(val input: String): CompletionError()
+   class FirstThreeOctetsTooLong(val input: String): CompletionError()
    class FirstThreeOctetsNotFormattedCorrectly(val input: String): CompletionError()
    class PortTooLow(val input: Int): CompletionError()
    class PortTooHigh(val input: Int): CompletionError()
@@ -26,9 +27,11 @@ sealed class CompletionError {
       fun printError(logger: Logger, completionErrorIn: Outcome.Failure<CompletionError>) =
          when (val completionError = completionErrorIn.error) {
             is FirstThreeOctetsNotFormattedCorrectly ->
-               logger.error("First three octets is not correctly formatted correctly: {}", completionError.input)
+               logger.error("First three octets are not formatted correctly: {}", completionError.input)
             is FirstThreeOctetsTooShort ->
-               logger.error("first three octets is too short : {}", completionError.input)
+               logger.error("First three octets are too short: {}", completionError.input)
+            is FirstThreeOctetsTooLong ->
+               logger.error("First three octets are too long: {}", completionError.input)
             is PortNotNumber ->
                logger.error("Port was not a number: {}", completionError.input)
             is PortTooHigh ->
@@ -58,4 +61,3 @@ sealed class CompletionError {
          }
    }
 }
-

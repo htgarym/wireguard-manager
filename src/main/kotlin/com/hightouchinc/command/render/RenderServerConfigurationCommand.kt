@@ -8,8 +8,9 @@ import com.hightouchinc.persistence.server.ServerRepository
 import com.hightouchinc.templating.TemplatingService
 import io.micronaut.context.annotation.Value
 import jakarta.inject.Inject
-import java.io.File
 import java.io.FileWriter
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.concurrent.Callable
 import org.jline.consoleui.prompt.ConsolePrompt
 import org.jline.terminal.TerminalBuilder
@@ -33,7 +34,10 @@ class RenderServerConfigurationCommand @Inject constructor(
    private fun renderServerConfig(server: Server) {
       val peers = peerRepository.findByServerId(server.id.value).map(PeerEntity::toModel)
 
-      FileWriter(File(wireGuardManagerRoot, "wg0.conf")).use { fw ->  // TODO: This needs to be configuration on the server table that is auto-incrementing or something
+      val outputDir = Path.of(wireGuardManagerRoot)
+      Files.createDirectories(outputDir)
+
+      FileWriter(outputDir.resolve("wg0.conf").toFile()).use { fw ->  // TODO: This needs to be configuration on the server table that is auto-incrementing or something
          templatingService.renderServerConfig(server, peers, fw)
 
          fw.flush()
